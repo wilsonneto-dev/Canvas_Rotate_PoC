@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Point Rotation</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="500" height="500" style="border:1px solid #d3d3d3;">
+        Your browser does not support the HTML5 canvas tag.
+    </canvas>
+
+    <input id="num" />
+    <button id="rotateButton">Rotate</button>
+
+    <script>
+        var canvas = document.getElementById('myCanvas');
+        var context = canvas.getContext('2d');
+        var centerX = canvas.width / 2;
+        var centerY = canvas.height / 2;
+        var rotation = 0;
+        var squareSize = 100;
+
+        var square = [ 
+            {x: -squareSize, y: -squareSize},
+            {x: squareSize, y: -squareSize},
+            {x: squareSize, y: squareSize},
+            {x: -squareSize, y: squareSize},
+        ];
+
+        function drawSquare(square) {
+            context.beginPath();
+            context.moveTo(square[0].x + centerX, square[0].y + centerY);
+            for (var i = 1; i < square.length; i++) {
+                context.lineTo(square[i].x + centerX, square[i].y + centerY);
+            }
+            context.closePath();
+            context.stroke();
+        }
+
+        function rotatePoint(point, angle) {
+            var rad = angle * Math.PI / 180;  // convert to radians
+            return {
+                x: point.x * Math.cos(rad) - point.y * Math.sin(rad),
+                y: point.x * Math.sin(rad) + point.y * Math.cos(rad)
+            };
+        }
+
+        function rotateSquare(square, angle) {
+            return square.map(function(point) { return rotatePoint(point, angle); });
+        }
+
+        // Draw the initial square
+        drawSquare(square);
+
+        document.getElementById('rotateButton').addEventListener('click', function() {
+            rotation += parseInt(document.getElementById('num').value);
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            var rotatedSquare = rotateSquare(square, rotation);
+            drawSquare(rotatedSquare);
+        });
+    </script>
+</body>
+</html>
